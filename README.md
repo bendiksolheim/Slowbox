@@ -1,6 +1,6 @@
 # TermSwift
 
-*Disclaimer: you should probably not use this for anything at all. I have no idea where it works, or if it works.*
+*Disclaimer: you should probably not use this for anything at all. I have no idea where it works, or if it works. Terminals are hard, man..*
 
 Somewhat low level access to controlling your terminal and using it to make TUIs and what not. You can see it as a Swift version of [termbox](https://github.com/nsf/termbox). Except that termbox works on cells, and TermSwift right now works on lines.
 
