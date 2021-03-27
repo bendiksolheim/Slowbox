@@ -31,3 +31,13 @@ let buffer = terminal.emptyBuffer<String>()
 buffer[0] = "Hello, World!"
 terminal.draw(buffer, { $0 })
 ```
+
+Clean up on exit
+
+```Swift
+let terminal = Temrinal(screen: .Alternate)
+
+// Do your thing here
+
+terminal.restore()
+```
