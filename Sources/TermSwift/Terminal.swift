@@ -4,7 +4,7 @@ import os.log
 public class Terminal {
     let fileHandle: FileHandle
     let originalTerm: termios
-    public var size: Size
+    var size: Size
     var resizeHandler: DispatchSourceSignal?
     public var cursor = Cursor(x: 0, y: 0)
     var lastResizeEvent: Size?
@@ -29,13 +29,13 @@ public class Terminal {
         Term.flush()
     }
     
-    public func draw<T>(_ buffer: Canvas<T?>, _ toString: (T) -> String) {
+    public func draw<T>(_ buffer: [T?], _ toString: (T) -> String) {
         let currentCursor = Cursor(x: cursor.x, y: cursor.y)
         
         let view = Term.CURSOR_HIDE
             + Term.CLEAR_SCREEN
             + Term.goto(x: 1, y: 1)
-            + buffer.grid[0..<size.height].map {
+            + buffer[0..<size.height].map {
                 if let v = $0 {
                     return toString(v)
                 } else {
@@ -49,8 +49,8 @@ public class Terminal {
         Term.flush()
     }
     
-    public func emptyBuffer<T>() -> Canvas<T?> {
-        return Canvas(height: size.height, width: size.width, defaultValue: nil)
+    public func terminalSize() -> Size {
+        return self.size
     }
     
     public func clear() {
