@@ -35,7 +35,7 @@ public class Terminal {
         let view = Term.CURSOR_HIDE
             + Term.CLEAR_SCREEN
             + Term.goto(x: 1, y: 1)
-            + buffer[0..<size.height].map {
+            + buffer[0..<buffer.count].map {
                 if let v = $0 {
                     return toString(v)
                 } else {
