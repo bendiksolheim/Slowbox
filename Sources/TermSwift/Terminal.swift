@@ -98,14 +98,6 @@ public class Terminal {
     }
 }
 
-func measure(_ label: String, block: () -> Void) {
-    let info = ProcessInfo.processInfo
-    let start = info.systemUptime
-    block()
-    let diff = info.systemUptime - start
-    os_log("%{public}@", "\(label): \(diff)s")
-}
-
 func convertBytes(_ bytes: [UInt8], _ n: Int) -> KeyEvent? {
     switch n {
         case 1:
