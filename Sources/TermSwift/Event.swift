@@ -14,6 +14,7 @@ public enum KeyEvent: Equatable, Hashable {
     public static let esc : KeyEvent = .Special(.Esc)
     public static let enter : KeyEvent = .Special(.Enter)
     public static let dollar : KeyEvent = .Char("$")
+    public static let question : KeyEvent = .Char("?")
     
     public static let a : KeyEvent = .Char("a")
     public static let b : KeyEvent = .Char("b")
