@@ -101,11 +101,10 @@ public class Terminal {
 func convertBytes(_ bytes: [UInt8], _ n: Int) -> KeyEvent? {
     switch n {
         case 1:
-            if bytes[0] == 9 {
-                return .Special(.Tab)
-            }
             let byte = bytes[0]
-            if ctrlKeys.contains(byte) {
+            if let special = specialKeys[byte] {
+                return special
+            } else if ctrlKeys.contains(byte) {
                 return .Ctrl(Character(UnicodeScalar(byte - 0x1 + UInt8(ascii: "a"))))
             } else {
                 return .Char(Character(UnicodeScalar(byte)))
