@@ -102,10 +102,32 @@ public enum KeyEvent: Equatable, Hashable {
     public static let CtrlX : KeyEvent = .Ctrl("x")
     public static let CtrlY : KeyEvent = .Ctrl("y")
     public static let CtrlZ : KeyEvent = .Ctrl("z")
+    
+    public func stringValue() -> String {
+        switch self {
+        case .Char(let c):
+            return c.description
+        case .Special(let c):
+            return c.stringValue()
+        case .Ctrl(let c):
+            return "Ctrl - " + c.description
+        }
+    }
 }
 
 public enum SpecialKeyEvent: Equatable {
     case Tab
     case Esc
     case Enter
+    
+    public func stringValue() -> String {
+        switch self {
+        case .Tab:
+            return "Tab"
+        case .Esc:
+            return "Escape"
+        case .Enter:
+            return "Enter"
+        }
+    }
 }
