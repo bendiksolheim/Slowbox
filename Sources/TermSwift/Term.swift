@@ -1,10 +1,3 @@
-import Foundation
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin.C
-#endif
-
 struct Term {
     static let CLEAR_SCREEN = "\u{001B}[2J"
     static let ALTERNATE_SCREEN = "\u{001B}[?1049h"
@@ -52,26 +45,4 @@ struct Term {
     static func goto(x: Int, y: Int) -> String {
         "\u{001B}[\(y);\(x)H"
     }
-    
-    static func print(_ value: String) {
-        _print(value, terminator: "")
-    }
-    
-    static func flush() {
-        fflush(stdout)
-    }
-    
-    static func size() throws -> Size {
-        var sz = winsize()
-        let success = ioctl(FileHandle.standardInput.fileDescriptor, TIOCGWINSZ, &sz)
-        if success != 0 {
-            throw TerminalError.GenericError("Could not get size of terminal window")
-        }
-        return Size(width: Int(sz.ws_col), height: Int(sz.ws_row))
-    }
-}
-
-// Wrap print function so we don’t shadow it in Term struct
-private func _print(_ items: String, terminator: String = "\n") {
-    print(items, terminator: terminator)
 }

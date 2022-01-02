@@ -2,20 +2,23 @@ import Foundation
 import os.log
 
 public class Terminal {
-    let fileHandle: FileHandle
+    let io: IO
     let originalTerm: termios
     var size: Size
     var resizeHandler: DispatchSourceSignal?
     public var cursor = Cursor(x: 0, y: 0)
     var lastResizeEvent: Size?
+    var buffer: [Cell]
     
-    public init(screen: Screen) {
-        self.fileHandle = FileHandle.standardInput
-        Term.print(screen.escapeCode())
-        Term.flush()
-        self.originalTerm = enableRawMode(fileHandle: self.fileHandle)
-        self.size = try! Term.size()
+    public init(io: IO, screen: Screen) {
+        self.io = io
+        self.originalTerm = io.enableRawMode()
+        self.size = try! io.size()
+        self.buffer = Array(repeating: Cell(" "), count: size.width * size.height)
         self.resizeHandler = resizeEvents()
+        
+        io.print(screen.escapeCode())
+        io.flush()
     }
     
     public func moveCursor(_ x: Int, _ y: Int) {
@@ -25,42 +28,59 @@ public class Terminal {
         }
         
         cursor = Cursor(x: x, y: y)
-        Term.print(Term.goto(x: x + 1, y: y + 1))
-        Term.flush()
+        io.print(Term.goto(x: x + 1, y: y + 1))
+        io.flush()
     }
     
-    public func draw<T>(_ buffer: [T?], _ toString: (T) -> String) {
-        let currentCursor = Cursor(x: cursor.x, y: cursor.y)
+    public func put(x: Int, y: Int, cell: Cell) {
+        guard x >= 0 && y >= 0
+           && x < size.width && y < size.height else {
+               return
+           }
         
-        let view = Term.CURSOR_HIDE
+        buffer[y * size.width + x] = cell
+    }
+    
+    public func present() {
+        let currentCursor = Cursor(x: cursor.x, y: cursor.y)
+        var format = buffer[0].formatting
+        
+        let view = format.description + buffer.map { item in
+            if item.formatting != format {
+                format = item.formatting
+                return format.description + String(item.content)
+            } else {
+                return String(item.content)
+            }
+        }.chunked(by: size.width)
+         .map { $0.joined() }
+         .joined(separator: "\r\n")
+        
+        let output = Term.CURSOR_HIDE
             + Term.CLEAR_SCREEN
             + Term.goto(x: 1, y: 1)
-            + buffer[0..<buffer.count].map {
-                if let v = $0 {
-                    return toString(v)
-                } else {
-                    return ""
-                }
-            }.joined(separator: "\n")
+            + view
             + Term.goto(x: currentCursor.x + 1, y: currentCursor.y + 1)
             + Term.CURSOR_SHOW
         
-        Term.print(view)
-        Term.flush()
+        io.print(output)
+        io.flush()
     }
     
     public func terminalSize() -> Size {
         return self.size
     }
     
-    public func clear() {
-        Term.print(Term.CLEAR_SCREEN)
-        Term.flush()
+    public func clearBuffer() {
+        self.buffer = Array(repeating: Cell(" "), count: size.width * size.height)
     }
     
     public func restore() {
-        restoreRawMode(fileHandle: self.fileHandle, originalTerm: self.originalTerm)
-        Term.print(Term.MAIN_SCREEN)
+        io.print(Term.CURSOR_SHOW)
+        io.print(Term.MAIN_SCREEN)
+        io.flush()
+        io.restoreMode(mode: self.originalTerm)
+        //try! io.close()
     }
     
     public func poll() -> Event? {
@@ -76,9 +96,8 @@ public class Terminal {
     }
     
     func readEvent() -> KeyEvent? {
-        var char: [UInt8] = [0, 0, 0, 0]
-        let n = read(self.fileHandle.fileDescriptor, &char, 4)
-        return convertBytes(char, n)
+        let chars = io.read(bytes: 4)
+        return convertBytes(chars, chars.count)
     }
     
     func resizeEvents() -> DispatchSourceSignal {
@@ -120,39 +139,10 @@ func convertBytes(_ bytes: [UInt8], _ n: Int) -> KeyEvent? {
     }
 }
 
-public struct Size: Equatable, Hashable {
-    public let width: Int
-    public let height: Int
-    
-    public init(width: Int, height: Int) {
-        self.width = width
-        self.height = height
+extension Array {
+    func chunked(by chunkSize: Int) -> [[Element]] {
+        return stride(from: 0, to: self.count, by: chunkSize).map {
+            Array(self[$0..<Swift.min($0 + chunkSize, self.count)])
+        }
     }
-}
-
-// https://stackoverflow.com/questions/49748507/listening-to-stdin-in-swift
-func initStruct<S>() -> S {
-    let struct_pointer = UnsafeMutablePointer<S>.allocate(capacity: 1)
-    let struct_memory = struct_pointer.pointee
-    struct_pointer.deallocate()
-    return struct_memory
-}
-
-func enableRawMode(fileHandle: FileHandle) -> termios {
-    var raw: termios = initStruct()
-    tcgetattr(fileHandle.fileDescriptor, &raw)
-    let original = raw
-    // Flags for raw mode from https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
-    raw.c_iflag &= ~(UInt(ICRNL | IXON))
-    raw.c_lflag &= ~(UInt(ECHO | ICANON | IEXTEN | ISIG))
-    raw.c_cc.16 = 0 // VMIN == 16
-    raw.c_cc.17 = 10 // VTIME == 17
-    
-    tcsetattr(fileHandle.fileDescriptor, TCSAFLUSH, &raw)
-    return original
-}
-
-func restoreRawMode(fileHandle: FileHandle, originalTerm: termios) {
-    var term = originalTerm
-    tcsetattr(fileHandle.fileDescriptor, TCSAFLUSH, &term)
 }

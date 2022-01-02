@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Formatting: CustomStringConvertible {
+public struct Formatting: CustomStringConvertible, Equatable {
     let foreground: Layer
     let background: Layer
     
@@ -14,7 +14,7 @@ public struct Formatting: CustomStringConvertible {
     }
 }
 
-public enum Layer {
+public enum Layer: Equatable {
     case Foreground(Color)
     case Background(Color)
 }

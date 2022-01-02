@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "TermSwift",
-    platforms: [ .macOS(.v10_14) ],
+    platforms: [ .macOS(.v11) ],
     products: [
         .library(
             name: "TermSwift",
