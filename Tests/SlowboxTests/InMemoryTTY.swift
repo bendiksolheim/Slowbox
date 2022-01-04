@@ -1,6 +1,6 @@
 import Darwin.POSIX.termios
 import Foundation
-import TermSwift
+import Slowbox
 
 class InMemoryTTY: IO {
     let termSize: Size

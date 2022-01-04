@@ -3,5 +3,5 @@ import XCTest
 import TermTests
 
 var tests = [XCTestCaseEntry]()
-tests += TermTests.allTests()
+tests += SlowboxTests.allTests()
 XCTMain(tests)

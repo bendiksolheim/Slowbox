@@ -1,7 +1,7 @@
 import Foundation
 import os.log
 
-public class Terminal {
+public class Slowbox {
     let io: IO
     let originalTerm: termios
     var size: Size

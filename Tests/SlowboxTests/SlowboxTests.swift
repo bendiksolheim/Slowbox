@@ -1,16 +1,16 @@
 import XCTest
-@testable import TermSwift
+@testable import Slowbox
 
-final class TermTests: XCTestCase {
+final class SlowboxTests: XCTestCase {
     func testCanStartApp() {
         let io = InMemoryTTY(size: Size(width: 10, height: 10))
-        let term = Terminal(io: io, screen: .Alternate)
+        let term = Slowbox(io: io, screen: .Alternate)
         XCTAssertEqual(term.size, Size(width: 10, height: 10))
     }
     
     func testCanPrint() {
         let io = InMemoryTTY(size: Size(width: 3, height: 1))
-        let term = Terminal(io: io, screen: .Alternate)
+        let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
         term.put(x: 0, y: 0, cell: Cell("L"))
         term.put(x: 1, y: 0, cell: Cell("o"))
@@ -22,7 +22,7 @@ final class TermTests: XCTestCase {
     
     func testCanPrintTwoLines() {
         let io = InMemoryTTY(size: Size(width: 2, height: 2))
-        let term = Terminal(io: io, screen: .Alternate)
+        let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
         term.put(x: 0, y: 0, cell: Cell("L"))
         term.put(x: 1, y: 0, cell: Cell("o"))
@@ -34,7 +34,7 @@ final class TermTests: XCTestCase {
     
     func testSpecifyForegroundAndBackground() {
         let io = InMemoryTTY(size: Size(width: 1, height: 1))
-        let term = Terminal(io: io, screen: .Alternate)
+        let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
         term.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
         term.present()
@@ -44,7 +44,7 @@ final class TermTests: XCTestCase {
     
     func testCanChangeColorMidway() {
         let io = InMemoryTTY(size: Size(width: 2, height: 2))
-        let term = Terminal(io: io, screen: .Alternate)
+        let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
         term.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
         term.put(x: 1, y: 0, cell: Cell("b", foreground: .Blue, background: .Cyan))
@@ -57,6 +57,10 @@ final class TermTests: XCTestCase {
 
     static var allTests = [
         ("testCanStartApp", testCanStartApp),
+        ("testCanPrint", testCanPrint),
+        ("testCanPrintTwoLines", testCanPrintTwoLines),
+        ("testSpecifyForegroundAndBackground", testSpecifyForegroundAndBackground),
+        ("testCanChangeColorMidway", testCanChangeColorMidway)
     ]
 }
 

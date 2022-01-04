@@ -4,20 +4,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "TermSwift",
+    name: "Slowbox",
     platforms: [ .macOS(.v11) ],
     products: [
         .library(
-            name: "TermSwift",
-            targets: ["TermSwift"]),
+            name: "Slowbox",
+            targets: ["Slowbox"]),
     ],
     dependencies: [],
     targets: [
         .target(
-            name: "TermSwift",
+            name: "Slowbox",
             dependencies: []),
         .testTarget(
-            name: "TermTests",
-            dependencies: ["TermSwift"]),
+            name: "SlowboxTests",
+            dependencies: ["Slowbox"]),
     ]
 )
