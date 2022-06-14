@@ -5,7 +5,7 @@ public enum Event: Equatable, Hashable {
     case Resize(Size)
 }
 
-public enum KeyEvent: Equatable, Hashable {
+public enum KeyEvent: Equatable, Hashable, Encodable {
     case Char(Character)
     case Special(SpecialKeyEvent)
     case Ctrl(Character)
@@ -113,9 +113,21 @@ public enum KeyEvent: Equatable, Hashable {
             return "Ctrl - " + c.description
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        switch self {
+        case let .Char(c):
+            try container.encode(c.description)
+        case let .Special(s):
+            try container.encode(s)
+        case let .Ctrl(c):
+            try container.encode("Ctrl+" + c.description)
+        }
+    }
 }
 
-public enum SpecialKeyEvent: Equatable {
+public enum SpecialKeyEvent: Equatable, Encodable {
     case Tab
     case Esc
     case Enter
