@@ -6,7 +6,7 @@ public class Slowbox {
     let originalTerm: termios
     var size: Size
     var resizeHandler: DispatchSourceSignal?
-    public var cursor = Cursor(x: 0, y: 0)
+    public var cursor = TerminalCursor(x: 0, y: 0)
     var lastResizeEvent: Size?
     var buffer: [Cell]
     
@@ -27,7 +27,7 @@ public class Slowbox {
             return
         }
         
-        cursor = Cursor(x: x, y: y)
+        cursor = TerminalCursor(x: x, y: y)
         io.print(Term.goto(x: x + 1, y: y + 1))
         io.flush()
     }
@@ -42,7 +42,7 @@ public class Slowbox {
     }
     
     public func present() {
-        let currentCursor = Cursor(x: cursor.x, y: cursor.y)
+        let currentCursor = TerminalCursor(x: cursor.x, y: cursor.y)
         var format = buffer[0].formatting
         
         let view = format.description + buffer.map { item in

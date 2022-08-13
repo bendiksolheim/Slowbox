@@ -64,7 +64,7 @@ final class SlowboxTests: XCTestCase {
     ]
 }
 
-func withEscapeCodes(_ view: String, _ currentCursor: Cursor) -> String {
+func withEscapeCodes(_ view: String, _ currentCursor: TerminalCursor) -> String {
     return (Term.CURSOR_HIDE
         + Term.CLEAR_SCREEN
         + Term.goto(x: 1, y: 1)

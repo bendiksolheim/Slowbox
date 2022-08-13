@@ -1,4 +1,4 @@
-public struct Cursor : Equatable, Hashable {
+public struct TerminalCursor: Equatable, Hashable {
     public let x: Int
     public let y: Int
     
