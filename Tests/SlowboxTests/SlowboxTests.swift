@@ -17,7 +17,7 @@ final class SlowboxTests: XCTestCase {
         term.put(x: 2, y: 0, cell: Cell("l"))
         term.present()
         
-        XCTAssertEqual(io.output(), withEscapeCodes(Term.BACKGROUND_DEFAULT + Term.FOREGROUND_DEFAULT + "Lol", term.cursor))
+        XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Default, .Default).description + "Lol", term.cursor))
     }
     
     func testCanPrintTwoLines() {
@@ -29,7 +29,7 @@ final class SlowboxTests: XCTestCase {
         term.put(x: 0, y: 1, cell: Cell("l"))
         term.present()
         
-        XCTAssertEqual(io.output(), withEscapeCodes(Term.BACKGROUND_DEFAULT + Term.FOREGROUND_DEFAULT + "Lo\nl ", term.cursor))
+        XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Default, .Default).description + "Lo\r\nl ", term.cursor))
     }
     
     func testSpecifyForegroundAndBackground() {
@@ -39,7 +39,7 @@ final class SlowboxTests: XCTestCase {
         term.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
         term.present()
         
-        XCTAssertEqual(io.output(), withEscapeCodes(Term.BACKGROUND_CYAN + Term.FOREGROUND_BLUE + "a", term.cursor))
+        XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Blue, .Cyan).description + "a", term.cursor))
     }
     
     func testCanChangeColorMidway() {
@@ -52,7 +52,7 @@ final class SlowboxTests: XCTestCase {
         term.put(x: 1, y: 1, cell: Cell("d", foreground: .Red, background: .Black))
         term.present()
         
-        XCTAssertEqual(io.output(), withEscapeCodes("\(Term.BACKGROUND_CYAN + Term.FOREGROUND_BLUE)ab\n\(Term.BACKGROUND_BLACK + Term.FOREGROUND_RED)cd", term.cursor))
+        XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Blue, .Cyan).description + "ab\r\n" + Formatting(.Red, .Black).description + "cd", term.cursor))
     }
 
     static var allTests = [
