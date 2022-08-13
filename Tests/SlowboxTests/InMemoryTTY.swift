@@ -7,16 +7,18 @@ class InMemoryTTY: IO {
     var termOutput = ""
     
     init(size: Size) {
-        self.termSize = size
+        termSize = size
     }
     
     func read(bytes: Int) -> [UInt8] {
-        return "a".utf8.map { UInt8($0) }
+        "a".utf8.map {
+            UInt8($0)
+        }
     }
     
     func enableRawMode() -> termios {
         // Not needed
-        return termios()
+        termios()
     }
     
     func restoreMode(mode: termios) {
@@ -32,11 +34,11 @@ class InMemoryTTY: IO {
     }
     
     func size() throws -> Size {
-        return termSize
+        termSize
     }
     
     func output() -> String {
-        return termOutput.replacingOccurrences(of: "\u{001B}", with: "\\")
+        termOutput.replacingOccurrences(of: "\u{001B}", with: "\\")
     }
     
     func reset() {

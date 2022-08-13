@@ -7,18 +7,23 @@ public class Slowbox {
     var size: Size
     var resizeHandler: DispatchSourceSignal?
     public var cursor = TerminalCursor(x: 0, y: 0)
+    var showCursor = false
     var lastResizeEvent: Size?
     var buffer: [Cell]
     
     public init(io: IO, screen: Screen) {
         self.io = io
-        self.originalTerm = io.enableRawMode()
-        self.size = try! io.size()
-        self.buffer = Array(repeating: Cell(" "), count: size.width * size.height)
-        self.resizeHandler = resizeEvents()
+        originalTerm = io.enableRawMode()
+        size = try! io.size()
+        buffer = Array(repeating: Cell(" "), count: size.width * size.height)
+        resizeHandler = resizeEvents()
         
         io.print(screen.escapeCode())
         io.flush()
+    }
+
+    public func showCursor(_ show: Bool) {
+        showCursor = show
     }
     
     public func moveCursor(_ x: Int, _ y: Int) {
@@ -56,12 +61,15 @@ public class Slowbox {
          .map { $0.joined() }
          .joined(separator: "\r\n")
         
-        let output = Term.CURSOR_HIDE
+        var output = Term.CURSOR_HIDE
             + Term.CLEAR_SCREEN
             + Term.goto(x: 1, y: 1)
             + view
             + Term.goto(x: currentCursor.x + 1, y: currentCursor.y + 1)
-            + Term.CURSOR_SHOW
+
+        if showCursor {
+            output += Term.CURSOR_SHOW
+        }
         
         io.print(output)
         io.flush()

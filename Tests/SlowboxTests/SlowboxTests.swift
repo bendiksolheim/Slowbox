@@ -69,6 +69,5 @@ func withEscapeCodes(_ view: String, _ currentCursor: TerminalCursor) -> String 
         + Term.CLEAR_SCREEN
         + Term.goto(x: 1, y: 1)
         + view.replacingOccurrences(of: "\u{001B}", with: "\\")
-        + Term.goto(x: currentCursor.x + 1, y: currentCursor.y + 1)
-        + Term.CURSOR_SHOW).replacingOccurrences(of: "\u{001B}", with: "\\")
+        + Term.goto(x: currentCursor.x + 1, y: currentCursor.y + 1)).replacingOccurrences(of: "\u{001B}", with: "\\")
 }
