@@ -28,6 +28,6 @@ public struct Cell {
             modifiedBackground = self.formatting.background.color()
         }
 
-        Self(content ?? self.content, Formatting(modifiedForeground, modifiedBackground))
+        return Self(content ?? self.content, formatting: Formatting(modifiedForeground, modifiedBackground))
     }
 }
