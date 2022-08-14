@@ -45,7 +45,17 @@ public class Slowbox {
         
         buffer[y * size.width + x] = cell
     }
-    
+
+    public func modify(x: Int, y: Int, _ fn: (Cell) -> Cell) {
+        guard x >= 0 && y >= 0
+           && x < size.width && y < size.height else {
+              return
+           }
+
+        buffer[y * size.width + x] = fn(buffer[y * size.width + x])
+
+    }
+
     public func present() {
         let currentCursor = TerminalCursor(x: cursor.x, y: cursor.y)
         var format = buffer[0].formatting
@@ -76,18 +86,18 @@ public class Slowbox {
     }
     
     public func terminalSize() -> Size {
-        return self.size
+        size
     }
     
     public func clearBuffer() {
-        self.buffer = Array(repeating: Cell(" "), count: size.width * size.height)
+        buffer = Array(repeating: Cell(" "), count: size.width * size.height)
     }
     
     public func restore() {
         io.print(Term.CURSOR_SHOW)
         io.print(Term.MAIN_SCREEN)
         io.flush()
-        io.restoreMode(mode: self.originalTerm)
+        io.restoreMode(mode: originalTerm)
         //try! io.close()
     }
     
@@ -127,30 +137,30 @@ public class Slowbox {
 
 func convertBytes(_ bytes: [UInt8], _ n: Int) -> KeyEvent? {
     switch n {
-        case 1:
-            let byte = bytes[0]
-            if let special = specialKeys[byte] {
-                return special
-            } else if ctrlKeys.contains(byte) {
-                return .Ctrl(Character(UnicodeScalar(byte - 0x1 + UInt8(ascii: "a"))))
-            } else {
-                return .Char(Character(UnicodeScalar(byte)))
-            }
-        case 2:
-            if let c = String(data: Data(bytes: bytes, count: n), encoding: .utf8)?.first {
-                return .Char(c)
-            } else {
-                return nil
-            }
-        default:
+    case 1:
+        let byte = bytes[0]
+        if let special = specialKeys[byte] {
+            return special
+        } else if ctrlKeys.contains(byte) {
+            return .Ctrl(Character(UnicodeScalar(byte - 0x1 + UInt8(ascii: "a"))))
+        } else {
+            return .Char(Character(UnicodeScalar(byte)))
+        }
+    case 2:
+        if let c = String(data: Data(bytes: bytes, count: n), encoding: .utf8)?.first {
+            return .Char(c)
+        } else {
             return nil
+        }
+    default:
+        return nil
     }
 }
 
 extension Array {
     func chunked(by chunkSize: Int) -> [[Element]] {
-        return stride(from: 0, to: self.count, by: chunkSize).map {
-            Array(self[$0..<Swift.min($0 + chunkSize, self.count)])
+        stride(from: 0, to: count, by: chunkSize).map {
+            Array(self[$0..<Swift.min($0 + chunkSize, count)])
         }
     }
 }

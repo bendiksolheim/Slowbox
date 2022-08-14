@@ -8,9 +8,9 @@ public struct Formatting: CustomStringConvertible, Equatable {
         self.foreground = .Foreground(foreground)
         self.background = .Background(background)
     }
-    
+
     public var description: String {
-        return "\u{001b}[0;\(foreground.description);\(background.description)m"
+        "\u{001b}[0;\(foreground.description);\(background.description)m"
     }
 }
 
@@ -40,6 +40,14 @@ public enum Color {
 }
 
 extension Layer: CustomStringConvertible {
+    func color() -> Color {
+        switch self {
+        case let .Foreground(c):
+            return c
+        case let .Background(c):
+            return c
+        }
+    }
     public var description: String {
         switch self {
         case let .Foreground(color):

@@ -13,4 +13,21 @@ public struct Cell {
         self.content = content
         self.formatting = formatting
     }
+
+    public func with(content: Character? = nil, foreground: Color? = nil, background: Color? = nil) -> Cell {
+        let modifiedForeground: Color
+        if let foreground = foreground {
+            modifiedForeground = foreground
+        } else {
+            modifiedForeground = self.formatting.foreground.color()
+        }
+        let modifiedBackground: Color
+        if let background = background {
+            modifiedBackground = background
+        } else {
+            modifiedBackground = self.formatting.background.color()
+        }
+
+        Self(content ?? self.content, Formatting(modifiedForeground, modifiedBackground))
+    }
 }
