@@ -1,10 +1,17 @@
 import Foundation
 
 public struct Rectangle {
-    let x: Int
-    let y: Int
-    let width: Int
-    let height: Int
+    public let x: Int
+    public let y: Int
+    public let width: Int
+    public let height: Int
+    
+    public init(x: Int, y: Int, width: Int, height: Int) {
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+    }
     
     public static func empty() -> Rectangle {
         Rectangle(x: 0, y: 0, width: 0, height: 0)
