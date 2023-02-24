@@ -1,6 +1,6 @@
 import Foundation
 
-public class Buffer {
+public class Buffer: Equatable, CustomStringConvertible {
     let size: Size
     var buffer: [Cell]
     
@@ -32,4 +32,25 @@ public class Buffer {
             buffer[index]
         }
     }
+    
+    public func copy(to buffer: Buffer, from: Rectangle, to: Rectangle) {
+        let yDiff = to.y - from.y
+        (from.y..<(from.y + from.height)).forEach { y in
+            let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + from.width)]
+            buffer.buffer.replaceSubrange(((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + to.width), with: row)
+        }
+    }
+    
+    public static func == (lhs: Buffer, rhs: Buffer) -> Bool {
+        return lhs.size == rhs.size
+            && lhs.buffer == rhs.buffer
+    }
+    
+    public var description: String {
+        buffer.map { $0.content.description }
+            .chunked(by: size.width)
+            .map { $0.joined() }
+            .joined(separator: "\n")
+    }
+    
 }
