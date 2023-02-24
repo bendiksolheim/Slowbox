@@ -4,7 +4,7 @@ public class Buffer {
     let size: Size
     var buffer: [Cell]
     
-    init(size: Size) {
+    public init(size: Size) {
         self.size = size
         buffer = Array(repeating: Cell(" "), count: size.width * size.height)
     }
