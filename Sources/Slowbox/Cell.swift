@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Cell {
+public struct Cell: Equatable {
     let formatting: Formatting
     let content: Character
     
