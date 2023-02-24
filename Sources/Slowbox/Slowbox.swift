@@ -9,13 +9,11 @@ public class Slowbox {
     public var cursor = TerminalCursor(x: 0, y: 0)
     var showCursor = false
     var lastResizeEvent: Size?
-    var buffer: [Cell]
     
     public init(io: IO, screen: Screen) {
         self.io = io
         originalTerm = io.enableRawMode()
         size = try! io.size()
-        buffer = Array(repeating: Cell(" "), count: size.width * size.height)
         resizeHandler = resizeEvents()
         
         io.print(screen.escapeCode())
@@ -37,30 +35,11 @@ public class Slowbox {
         io.flush()
     }
     
-    public func put(x: Int, y: Int, cell: Cell) {
-        guard x >= 0 && y >= 0
-           && x < size.width && y < size.height else {
-               return
-           }
-        
-        buffer[y * size.width + x] = cell
-    }
-
-    public func modify(x: Int, y: Int, _ fn: (Cell) -> Cell) {
-        guard x >= 0 && y >= 0
-           && x < size.width && y < size.height else {
-              return
-           }
-
-        buffer[y * size.width + x] = fn(buffer[y * size.width + x])
-
-    }
-
-    public func present() {
+    public func present(buffer: Buffer) {
         let currentCursor = TerminalCursor(x: cursor.x, y: cursor.y)
         var format = buffer[0].formatting
         
-        let view = format.description + buffer.map { item in
+        let view = format.description + buffer.buffer.map { item in
             if item.formatting != format {
                 format = item.formatting
                 return format.description + String(item.content)
@@ -89,8 +68,8 @@ public class Slowbox {
         size
     }
     
-    public func clearBuffer() {
-        buffer = Array(repeating: Cell(" "), count: size.width * size.height)
+    public func emptyBuffer() -> Buffer {
+        Buffer(size: size)
     }
     
     public func restore() {

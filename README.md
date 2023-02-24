@@ -29,10 +29,11 @@ Render stuff
 
 ```Swift
 let terminal = Slowbox(io: TTY(), screen: .Alternate)
+let buffer = terminal.emptyBuffer()
 Array("Hello, World!").enumerated().forEach { c in
-  terminal.put(x: item.offset, y: 0, cell: Cell($0))
+  buffer.put(x: item.offset, y: 0, cell: Cell($0))
 }
-terminal.present()
+terminal.present(buffer: buffer)
 ```
 
 Clean up on exit

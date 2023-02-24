@@ -12,10 +12,11 @@ final class SlowboxTests: XCTestCase {
         let io = InMemoryTTY(size: Size(width: 3, height: 1))
         let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
-        term.put(x: 0, y: 0, cell: Cell("L"))
-        term.put(x: 1, y: 0, cell: Cell("o"))
-        term.put(x: 2, y: 0, cell: Cell("l"))
-        term.present()
+        let buffer = term.emptyBuffer()
+        buffer.put(x: 0, y: 0, cell: Cell("L"))
+        buffer.put(x: 1, y: 0, cell: Cell("o"))
+        buffer.put(x: 2, y: 0, cell: Cell("l"))
+        term.present(buffer: buffer)
         
         XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Default, .Default).description + "Lol", term.cursor))
     }
@@ -24,10 +25,11 @@ final class SlowboxTests: XCTestCase {
         let io = InMemoryTTY(size: Size(width: 2, height: 2))
         let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
-        term.put(x: 0, y: 0, cell: Cell("L"))
-        term.put(x: 1, y: 0, cell: Cell("o"))
-        term.put(x: 0, y: 1, cell: Cell("l"))
-        term.present()
+        let buffer = term.emptyBuffer()
+        buffer.put(x: 0, y: 0, cell: Cell("L"))
+        buffer.put(x: 1, y: 0, cell: Cell("o"))
+        buffer.put(x: 0, y: 1, cell: Cell("l"))
+        term.present(buffer: buffer)
         
         XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Default, .Default).description + "Lo\r\nl ", term.cursor))
     }
@@ -36,8 +38,9 @@ final class SlowboxTests: XCTestCase {
         let io = InMemoryTTY(size: Size(width: 1, height: 1))
         let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
-        term.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
-        term.present()
+        let buffer = term.emptyBuffer()
+        buffer.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
+        term.present(buffer: buffer)
         
         XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Blue, .Cyan).description + "a", term.cursor))
     }
@@ -46,11 +49,12 @@ final class SlowboxTests: XCTestCase {
         let io = InMemoryTTY(size: Size(width: 2, height: 2))
         let term = Slowbox(io: io, screen: .Alternate)
         io.reset()
-        term.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
-        term.put(x: 1, y: 0, cell: Cell("b", foreground: .Blue, background: .Cyan))
-        term.put(x: 0, y: 1, cell: Cell("c", foreground: .Red, background: .Black))
-        term.put(x: 1, y: 1, cell: Cell("d", foreground: .Red, background: .Black))
-        term.present()
+        let buffer = term.emptyBuffer()
+        buffer.put(x: 0, y: 0, cell: Cell("a", foreground: .Blue, background: .Cyan))
+        buffer.put(x: 1, y: 0, cell: Cell("b", foreground: .Blue, background: .Cyan))
+        buffer.put(x: 0, y: 1, cell: Cell("c", foreground: .Red, background: .Black))
+        buffer.put(x: 1, y: 1, cell: Cell("d", foreground: .Red, background: .Black))
+        term.present(buffer: buffer)
         
         XCTAssertEqual(io.output(), withEscapeCodes(Formatting(.Blue, .Cyan).description + "ab\r\n" + Formatting(.Red, .Black).description + "cd", term.cursor))
     }
