@@ -35,7 +35,7 @@ public class Buffer: Equatable, CustomStringConvertible {
     }
     
     public func copy(to buffer: Buffer, from: Rectangle, to: Rectangle) {
-        os_log("Copying: \(self.size.description) (\(from.description)) to \(buffer.size.description) (\(to.description))")
+        os_log("%{public}@", "Copying: \(self.size.description) (\(from.description)) to \(buffer.size.description) (\(to.description))")
         let yDiff = to.y - from.y
         (from.y..<(from.y + from.height)).forEach { y in
             let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + from.width)]
