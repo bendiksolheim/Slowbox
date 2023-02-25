@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Rectangle {
+public struct Rectangle: CustomStringConvertible {
     public let x: Int
     public let y: Int
     public let width: Int
@@ -19,5 +19,9 @@ public struct Rectangle {
     
     public func with(x: Int? = nil, y: Int? = nil, width: Int? = nil, height: Int? = nil) -> Rectangle {
         Self(x: x ?? self.x, y: y ?? self.y, width: width ?? self.width, height: height ?? self.height)
+    }
+    
+    public var description: String {
+        "{x: \(x), y: \(y), width: \(width), height: \(height)}"
     }
 }
