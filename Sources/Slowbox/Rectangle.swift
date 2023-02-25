@@ -13,6 +13,13 @@ public struct Rectangle: CustomStringConvertible {
         self.height = height
     }
     
+    public init(size: Size) {
+        self.x = 0
+        self.y = 0
+        self.width = size.width
+        self.height = size.height
+    }
+    
     public static func empty() -> Rectangle {
         Rectangle(x: 0, y: 0, width: 0, height: 0)
     }
