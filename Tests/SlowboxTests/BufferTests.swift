@@ -26,6 +26,14 @@ final class BufferTests: XCTestCase {
         
         XCTAssertEqual(b2, createBuffer(["bbb", "baa", "baa"]))
     }
+    
+    func testCopyTooLargeRectFromBuffer() {
+        let b1 = createBuffer(["aaa", "aaa", "aaa"])
+        let b2 = createBuffer(["bbbb", "bbbb", "bbbb", "bbbb"])
+        b1.copy(to: b2, from: Rectangle(size: b2.size), to: Rectangle(size: b2.size))
+        
+        XCTAssertEqual(b2, createBuffer(["aaab", "aaab", "aaab", "bbbb"]))
+    }
 }
 
 func createBuffer(_ content: [String]) -> Buffer {

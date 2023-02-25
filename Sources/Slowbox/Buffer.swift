@@ -37,12 +37,12 @@ public class Buffer: Equatable, CustomStringConvertible {
     public func copy(to buffer: Buffer, from: Rectangle, to: Rectangle) {
         os_log("%{public}@", "Copying: \(self.size.description) (\(from.description)) to \(buffer.size.description) (\(to.description))")
         let yDiff = to.y - from.y
-        (from.y..<(from.y + from.height)).forEach { y in
-            let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + from.width)]
-            buffer.buffer.replaceSubrange(
-                ((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + to.width),
-                with: row
-            )
+        let fromHeight = min(from.height, size.height)
+        let fromWidth = min(from.width, size.width)
+        (from.y..<(from.y + fromHeight)).forEach { y in
+            let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + fromWidth)]
+            let replace = ((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + fromWidth)
+            buffer.buffer.replaceSubrange( replace, with: row )
         }
     }
     
