@@ -1,4 +1,5 @@
 import Foundation
+import os.log
 
 public class Buffer: Equatable, CustomStringConvertible {
     let size: Size
@@ -34,10 +35,14 @@ public class Buffer: Equatable, CustomStringConvertible {
     }
     
     public func copy(to buffer: Buffer, from: Rectangle, to: Rectangle) {
+        os_log("Copying: \(self.size.description) (\(from.description)) to \(buffer.size.description) (\(to.description))")
         let yDiff = to.y - from.y
         (from.y..<(from.y + from.height)).forEach { y in
             let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + from.width)]
-            buffer.buffer.replaceSubrange(((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + to.width), with: row)
+            buffer.buffer.replaceSubrange(
+                ((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + to.width),
+                with: row
+            )
         }
     }
     
