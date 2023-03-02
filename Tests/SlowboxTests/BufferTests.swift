@@ -34,6 +34,13 @@ final class BufferTests: XCTestCase {
         
         XCTAssertEqual(b2, createBuffer(["aaab", "aaab", "aaab", "bbbb"]))
     }
+    
+    func testCopyOutsideFromBuffer() {
+        let b1 = createBuffer(["aaa", "aaa", "aaa", "aaa"])
+        let b2 = createBuffer(["bbb", "bbb"])
+        b1.copy(to: b2, from: Rectangle(x: 0, y: 3, width: 3, height: 2), to: Rectangle(x: 0, y: 0, width: 3, height: 2))
+        XCTAssertEqual(b2, createBuffer(["aaa", "   "]))
+    }
 }
 
 func createBuffer(_ content: [String]) -> Buffer {

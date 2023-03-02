@@ -40,9 +40,14 @@ public class Buffer: Equatable, CustomStringConvertible {
         let fromHeight = min(from.height, size.height)
         let fromWidth = min(from.width, size.width)
         (from.y..<(from.y + fromHeight)).forEach { y in
-            let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + fromWidth)]
             let replace = ((y + yDiff) * buffer.size.width + to.x)..<((y + yDiff) * buffer.size.width + to.x + fromWidth)
-            buffer.buffer.replaceSubrange( replace, with: row )
+            if y >= self.size.height {
+                let row = (0 ..< to.width).map { _ in Cell (" ", foreground: .Default, background: .Default) }
+                buffer.buffer.replaceSubrange(replace, with: row)
+            } else {
+                let row = self.buffer[(y * size.width + from.x)..<(y * size.width + from.x + fromWidth)]
+                buffer.buffer.replaceSubrange( replace, with: row )
+            }
         }
     }
     
